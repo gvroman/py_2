@@ -16,3 +16,5 @@
 """
 
 mac = "AAAA:BBBB:CCCC"
+mac_hex = (int(mac.replace(':', ''), 16))
+print(bin(mac_hex).replace('0b', ''))
