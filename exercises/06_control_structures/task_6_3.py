@@ -82,3 +82,38 @@ trunk = {
 #         else:
 #             print(f" {command}")
 
+
+
+access_template = [
+    "switchport mode access",
+    "switchport access vlan",
+    "spanning-tree portfast",
+    "spanning-tree bpduguard enable",
+]
+
+trunk_template = [
+    "switchport trunk encapsulation dot1q",
+    "switchport mode trunk",
+    "switchport trunk allowed vlan",
+]
+
+access = {"0/12": "10", "0/14": "11", "0/16": "17", "0/17": "150"}
+trunk = {"0/1": ["add", "10", "20"], "0/2": ["only", "11", "30"], "0/4": ["del", "17"]}
+
+trunk_actions = {"add": " add", "del": " remove", "only": ""}
+
+for int, commd_vln in trunk.items():
+    print("interface FastEthernet" + int)
+    if commd_vln[0] == 'add':
+        exct = ' add'
+    elif commd_vln[0] == 'del':
+        exct = ' remove'
+    elif commd_vln[0] == 'only':
+        exct = ''
+    for command in trunk_template:
+        if command.endswith("allowed vlan"):
+            vlans = str(commd_vln[1:]).strip('[]').replace("'", "").replace(" ","")
+            print(f' {command}{exct} {vlans}')
+        else:
+            print(f" {command}")
+
