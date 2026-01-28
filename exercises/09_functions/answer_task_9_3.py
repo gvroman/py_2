@@ -25,20 +25,16 @@
 """
 
 def get_int_vlan_map(config_filename):
-    with open(config_filename) as f:
-        result = []
-        acc_int = {}
-        trunk_int = {}
-        for line in f:
-            if line.startswith('interface'):
+    access_dict = {}
+    trunk_dict = {}
+
+    with open(config_filename) as cfg:
+        for line in cfg:
+            line = line.rstrip()
+            if line.startswith("interface"):
                 intf = line.split()[1]
-            elif line.startswith(' switchport access vlan'):
-                *command, vlan = line.split()
-                acc_int[intf] = int(vlan)
-            elif line.startswith(' switchport trunk allowed'):
-                *command, vlans = line.split()
-                vlans = [int(vl) for vl in vlans.split(',')]
-                trunk_int[intf] = vlans
-        result.append(acc_int)
-        result.append(trunk_int)
-    return tuple(result)
+            elif "access vlan" in line:
+                access_dict[intf] = int(line.split()[-1])
+            elif "trunk allowed" in line:
+                trunk_dict[intf] = [int(v) for v in line.split()[-1].split(",")]
+        return access_dict, trunk_dict
